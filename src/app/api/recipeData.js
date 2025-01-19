@@ -10,7 +10,7 @@ export const fetchRecipes = async ({ pageParam = 1, recipeType = "" }) => {
         : endpoint;
 
     const response = await axios.get(url);
-    console.log(response.data)
+
     return {
         data: response.data.COOKRCP01.row,
         nextPage: pageParam + 1,

@@ -7,7 +7,7 @@
   font-family: "BookkMyungjo-Bd", "Pretendard-Regular", "Noto Sans KR",
     sans-serif;
   text-align: center;
-  margin: 150px 0 50px 0;
+  margin: 100px 0 50px 0;
 }
 .home__title-text1 {
   font-size: 28px;
@@ -31,6 +31,7 @@
   grid-template-areas:
     "img1 img2 img3"
     "img1 img4 img4";
+  padding-bottom: 50px;
 }
 .home_recommended-recipe {
   position: relative;
@@ -46,6 +47,7 @@
 }
 .home_recommended-recipe:nth-child(3) {
   grid-area: img3;
+  width: 250px;
   height: 280px;
 }
 .home_recommended-recipe:nth-child(4) {
@@ -82,6 +84,16 @@
 }
 .home_recommended-recipe:hover .home_recommended-recipe-text--hidden {
   opacity: 1;
+}
+
+.home_recommended-recipe--skeleton {
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+.home_recommended-recipe--skeleton:nth-child(3) {
+  width: 250px;
 }
 .recipe__type-wrap {
   display: flex;
@@ -139,24 +151,67 @@
 .recipe__tag {
   margin: 0 2px;
 }
+.recipe__list--skeleton {
+}
+.recipe__item--skeleton {
+}
+.recipe__image--skeleton {
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+.recipe__image--skeleton:hover {
+  filter: initial;
+}
+.recipe__name--skeleton {
+  width: 100%;
+  height: 30px;
+  margin: 5px 0;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
+.recipe__tags--skeleton {
+  width: 100%;
+  height: 30px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background-color: #e0e0e0;
+}
 .home__ref-bottom {
   margin: 50px 0;
   height: 1px;
   background: linear-gradient(to right, #777777c0, #fff);
 }
+
+/* 로딩 부분 */
 .loading {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 48px;
-  height: 48px;
-}
-.loading-bottom {
   position: absolute;
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   width: 48px;
   height: 48px;
+}
+/* 스켈레톤 움직임 */
+.skeleton-movement {
+  position: absolute;
+  top: 0;
+  left: -200px;
+  width: 200px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, #ededed, transparent);
+  animation: skeleton infinite linear 1.5s;
+}
+
+@keyframes skeleton {
+  0% {
+    left: -200px;
+  }
+  100% {
+    left: 100%;
+  }
 }

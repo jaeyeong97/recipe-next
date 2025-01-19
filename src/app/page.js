@@ -53,7 +53,21 @@ export default function Home() {
       </div>
       <div className="home__recommended-wrap">
         {recommendedRecipeIsLoading ?
-          <div>추천레시피 로딩 스켈레톤</div> :
+          <div className="home_recommended-recipes">
+            <div className="home_recommended-recipe home_recommended-recipe--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="home_recommended-recipe home_recommended-recipe--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="home_recommended-recipe home_recommended-recipe--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="home_recommended-recipe home_recommended-recipe--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </div>
+          :
           <div className="home_recommended-recipes">
             {recommendedRecipes && recommendedRecipes.map((recommendedRecipe, index) => (
               <div className="home_recommended-recipe"
@@ -128,7 +142,75 @@ export default function Home() {
         </div>
       </div>
       {isLoading ?
-        <div>전체 레시피 로딩 스켈레톤</div> :
+        <ul className="recipe__list recipe__list--skeleton">
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+        </ul>
+        :
         <ul className="recipe__list">
           {data && data.pages.map((page, pageIndex) =>
             page.data.map((recipe) => (
@@ -155,7 +237,7 @@ export default function Home() {
         </ul>
       }
       <div className="home__ref-bottom" ref={ref}></div>
-      {isFetchingNextPage && <img className="loading-bottom" src="/images/spinner.webp" alt="로딩" />}
+      {isFetchingNextPage && <img className="loading" src="/images/spinner.webp" alt="로딩" />}
     </main>
   );
 }
