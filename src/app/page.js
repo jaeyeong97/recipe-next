@@ -1,95 +1,161 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import Link from "next/link";
+import { fetchRecipes, fetchRecommendedRecipe } from "./api/recipeData";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { useEffect, useState } from "react";
+import "./styles/home.css";
+
+const useGetRecipes = (recipeType) => {
+  return useInfiniteQuery({
+    queryKey: ["recipes", recipeType],
+    queryFn: ({ pageParam }) => fetchRecipes({ pageParam, recipeType }),
+    getNextPageParam: (lastPage) =>
+      lastPage.isLastPage ? undefined : lastPage.nextPage,
+    initialPageParam: 1,
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+};
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [selectedType, setSelectedType] = useState("");
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+  const handleFilterChange = (type) => {
+    setSelectedType(type);
+  };
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } = useGetRecipes(selectedType);
+  const { ref, inView } = useInView();
+
+  const { data: recommendedRecipes, isLoading: recommendedRecipeIsLoading } = useQuery({
+    queryKey: ['recipe'],
+    queryFn: fetchRecommendedRecipe,
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  if (error) return <div>에러: {error.message}</div>;
+
+  return (
+    <main className="home">
+      <div className="home__title-wrap">
+        <div className="home__title-text1">
+          RECIPES FOR YOU
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <div className="home__title-text2">
+          추천드리는 레시피를 둘러보세요.
+        </div>
+      </div>
+      <div className="home__recommended-wrap">
+        {recommendedRecipeIsLoading ?
+          <div>추천레시피 로딩 스켈레톤</div> :
+          <div className="home_recommended-recipes">
+            {recommendedRecipes && recommendedRecipes.map((recommendedRecipe, index) => (
+              <div className="home_recommended-recipe"
+                key={recommendedRecipe.RCP_SEQ}>
+                <Link href={`/recipeDetail/${recommendedRecipe.RCP_NM}`}>
+                  <img
+                    className="home_recommended-recipe-image"
+                    src={recommendedRecipe.ATT_FILE_NO_MK}
+                    alt={recommendedRecipe.RCP_NM}
+                  />
+                  <p className={`home_recommended-recipe-text ${index >= 1 && index <= 2 ? 'home_recommended-recipe-text--hidden' : ''}`}>
+                    {recommendedRecipe.RCP_NM}
+                  </p>
+                </Link>
+              </div>
+            ))}
+          </div>
+        }
+      </div>
+      <div className="home__title-wrap">
+        <div className="home__title-text1">
+          FIND YOUR RECIPES
+        </div>
+        <div className="home__title-text2">
+          원하는 레시피를 찾아 맛있는 요리를 만들어 보세요.
+        </div>
+      </div>
+      <div className="recipe__type-wrap">
+        <div className="recipe__type_buttons">
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("")}
+          >
+            전체
+          </button>
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("반찬")}
+          >
+            반찬
+          </button>
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("일품")}
+          >
+            일품
+          </button>
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("밥")}
+          >
+            밥
+          </button>
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("국&찌개")}
+          >
+            국&찌개
+          </button>
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("후식")}
+          >
+            후식
+          </button>
+          <button
+            className="recipe__type-button"
+            onClick={() => handleFilterChange("기타")}
+          >
+            기타
+          </button>
+        </div>
+      </div>
+      {isLoading ?
+        <div>전체 레시피 로딩 스켈레톤</div> :
+        <ul className="recipe__list">
+          {data && data.pages.map((page, pageIndex) =>
+            page.data.map((recipe) => (
+              <li key={recipe.RCP_SEQ} className="recipe__item">
+                <Link href={`/recipeDetail/${recipe.RCP_NM}`}>
+                  {recipe.ATT_FILE_NO_MK && (
+                    <img
+                      src={recipe.ATT_FILE_NO_MK}
+                      alt={recipe.RCP_NM}
+                      className="recipe__image"
+                    />
+                  )}
+                  <div className="recipe__info">
+                    <span className="recipe__name">{recipe.RCP_NM}</span>
+                    <div className="recipe__tags">
+                      <span className="recipe__tag">#{recipe.RCP_WAY2}</span>
+                      <span className="recipe__tag">#{recipe.RCP_PAT2}</span>
+                    </div>
+                  </div>
+                </Link>
+              </li>
+            ))
+          )}
+        </ul>
+      }
+      <div className="home__ref-bottom" ref={ref}></div>
+      {isFetchingNextPage && <img className="loading-bottom" src="/images/spinner.webp" alt="로딩" />}
+    </main>
   );
 }
