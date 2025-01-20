@@ -77,7 +77,7 @@
   color: #777;
 }
 .recipe-detail__nutritions {
-  margin: 30px 0;
+  margin: 80px 0;
 }
 .recipe-detail__second-title {
   font-size: 18px;
@@ -97,15 +97,17 @@
   color: #777;
 }
 .recipe-detail__ingredients {
-  margin: 30px 0;
+  margin: 80px 0;
 }
 .recipe-detail__ingredient {
   font-size: 16px;
+  line-height: 1.4em;
   margin: 10px 0;
 }
 .recipe-detail__step {
   display: flex;
-  margin: 30px 0;
+  margin-top: 20px;
+  margin-bottom: 80px;
 }
 .recipe-detail__step-image {
   width: 30%;

@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
 import "./styles/home.css";
 
+// 무한스크롤 API 호출
 const useGetRecipes = (recipeType) => {
   return useInfiniteQuery({
     queryKey: ["recipes", recipeType],
@@ -19,10 +20,12 @@ const useGetRecipes = (recipeType) => {
 };
 
 export default function Home() {
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedType, setSelectedType] = useState(""); // 선택된 레시피 종류 상태 API 전달
+  const [btnClicked, setBtnClicked] = useState(""); // 선택된 레시피 버튼 클래스명 추가
 
   const handleFilterChange = (type) => {
     setSelectedType(type);
+    setBtnClicked(type);
   };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } = useGetRecipes(selectedType);
@@ -97,48 +100,15 @@ export default function Home() {
       </div>
       <div className="recipe__type-wrap">
         <div className="recipe__type_buttons">
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("")}
-          >
-            전체
-          </button>
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("반찬")}
-          >
-            반찬
-          </button>
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("일품")}
-          >
-            일품
-          </button>
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("밥")}
-          >
-            밥
-          </button>
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("국&찌개")}
-          >
-            국&찌개
-          </button>
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("후식")}
-          >
-            후식
-          </button>
-          <button
-            className="recipe__type-button"
-            onClick={() => handleFilterChange("기타")}
-          >
-            기타
-          </button>
+          {["", "반찬", "일품", "밥", "국", "후식", "기타"].map((type) => (
+            <button
+              key={type}
+              className={`recipe__type-button ${btnClicked === type ? "clicked" : ""}`}
+              onClick={() => handleFilterChange(type)}
+            >
+              {type === "" ? "전체" : type === "국" ? "국&찌개" : type}
+            </button>
+          ))}
         </div>
       </div>
       {isLoading ?
@@ -209,10 +179,76 @@ export default function Home() {
               <div className="skeleton-movement"></div>
             </div>
           </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
+          <li className="recipe__item recipe__item--skeleton">
+            <div className="recipe__image recipe__image--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__name recipe__name--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+            <div className="recipe__tags recipe__tags--skeleton">
+              <div className="skeleton-movement"></div>
+            </div>
+          </li>
         </ul>
         :
         <ul className="recipe__list">
-          {data && data.pages.map((page, pageIndex) =>
+          {data && data.pages.map((page) =>
             page.data.map((recipe) => (
               <li key={recipe.RCP_SEQ} className="recipe__item">
                 <Link href={`/recipeDetail/${recipe.RCP_NM}`}>

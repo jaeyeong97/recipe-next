@@ -3,6 +3,7 @@
 import "./styles/globals.css";
 import Header from "./components/Header";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import 'regenerator-runtime/runtime';
 
 const queryClient = new QueryClient();
 
