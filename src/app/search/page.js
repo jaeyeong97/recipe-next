@@ -8,8 +8,9 @@ import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognitio
 import "./search.css";
 
 const Search = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchTyping, setSearchTyping] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); //검색값 api로 전달
+  const [searchTyping, setSearchTyping] = useState(""); // 검색창 텍스트
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const { data: recipes, isLoading, error } = useQuery({
     queryKey: ["recipes", searchTerm],
@@ -17,7 +18,7 @@ const Search = () => {
     enabled: !!searchTerm,
   });
 
-  const { transcript, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
+  const { transcript, listening, browserSupportsSpeechRecognition } = useSpeechRecognition();
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -34,13 +35,28 @@ const Search = () => {
   };
 
   useEffect(() => {
-    if (transcript) {
+    // 음성 인식 후 검색
+    if (transcript && !listening) {
       setSearchTyping(transcript);
+      setSearchTerm(transcript);
     }
-  }, [transcript]);
+  }, [listening]);
 
+  useEffect(() => {
+    // 말하는중인지 체크
+    if (listening && transcript !== "") {
+      setIsSpeaking(true);
+    } else {
+      setIsSpeaking(false);
+    }
+  }, [transcript, listening]);
+  console.log(transcript);
   const handleStartSpeechRecognition = () => {
     SpeechRecognition.startListening();
+  };
+
+  const handleStopSpeechRecognition = () => {
+    SpeechRecognition.stopListening();
   };
 
   if (!browserSupportsSpeechRecognition) {
@@ -49,6 +65,24 @@ const Search = () => {
 
   return (
     <div className="search-page">
+      {listening &&
+        <div className="search-page__listening-wrap">
+          <div className={`search-page__listening ${isSpeaking && 'search-page__listening--active'}`}>
+            <img
+              className="search-page__mic-red-image"
+              src={isSpeaking ? "./images/mic-icon-white.svg" : "./images/mic-icon-red.svg"}
+              alt="녹음 아이콘"
+            />
+          </div>
+          <div className={`${isSpeaking ? 'search-page__speaking--active' : "search-page__speaking"}`}></div>
+          <img
+            className="search-page__listening-close-icon"
+            src="./images/close-icon-white.svg"
+            alt="닫기 아이콘"
+            onClick={handleStopSpeechRecognition}
+          />
+        </div>
+      }
       <div className="search__input-wrap">
         <input
           className="search__input"
@@ -78,38 +112,36 @@ const Search = () => {
           onClick={handleSearch}
         />
       </div>
-      {recipes?.length > 0 ?
-        <div className="search__length">
-          {recipes.length}개의 레시피가 검색되었습니다.
-        </div>
-        :
-        ""
-      }
 
       {recipes?.length > 0 ? (
-        <ul className="recipe__list">
-          {recipes.map((recipe) => (
-            <li key={recipe.RCP_SEQ} className="recipe__item">
-              <Link href={`/recipeDetail/${recipe.RCP_NM}`}>
-                {recipe.ATT_FILE_NO_MK && (
-                  <img
-                    src={recipe.ATT_FILE_NO_MK}
-                    alt={recipe.RCP_NM}
-                    className="recipe__image"
-                  />
-                )}
-                <div className="recipe__info">
-                  <span className="recipe__name">{recipe.RCP_NM}</span>
-                  <div className="recipe__tags">
-                    <span className="recipe__tag">#{recipe.RCP_WAY2}</span>
-                    <span className="recipe__tag">#{recipe.RCP_PAT2}</span>
+        <div>
+          <div className="search__length">
+            {recipes.length}개의 레시피가 검색되었습니다.
+          </div>
+          <ul className="recipe__list">
+            {recipes.map((recipe) => (
+              <li key={recipe.RCP_SEQ} className="recipe__item">
+                <Link href={`/recipeDetail/${recipe.RCP_NM}`}>
+                  {recipe.ATT_FILE_NO_MK && (
+                    <img
+                      src={recipe.ATT_FILE_NO_MK}
+                      alt={recipe.RCP_NM}
+                      className="recipe__image"
+                    />
+                  )}
+                  <div className="recipe__info">
+                    <span className="recipe__name">{recipe.RCP_NM}</span>
+                    <div className="recipe__tags">
+                      <span className="recipe__tag">#{recipe.RCP_WAY2}</span>
+                      <span className="recipe__tag">#{recipe.RCP_PAT2}</span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </li>
-          ))
-          }
-        </ul>
+                </Link>
+              </li>
+            ))
+            }
+          </ul>
+        </div>
       )
         : isLoading ? (
           <div className="search-loading">

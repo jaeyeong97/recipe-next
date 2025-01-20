@@ -2,8 +2,8 @@ import axios from "axios";
 
 // 전체 레시피
 export const fetchRecipes = async ({ pageParam = 1, recipeType = "" }) => {
-    const start = 50 + (pageParam - 1) * 16;
-    const end = 50 + pageParam * 16 - 1;
+    const start = 34 + (pageParam - 1) * 16;
+    const end = 34 + pageParam * 16 - 1;
     const endpoint = `https://openapi.foodsafetykorea.go.kr/api/d94323bfaec344a59d3d/COOKRCP01/json/${start}/${end}`;
     const url = recipeType
         ? `${endpoint}/RCP_PAT2=${encodeURIComponent(recipeType)}`
@@ -37,7 +37,8 @@ export const fetchSearchRecipes = async (searchTerm) => {
     if (!searchTerm) return [];
     const encodedSearchTerm = encodeURIComponent(searchTerm);
     const response = await axios.get(
-        `https://openapi.foodsafetykorea.go.kr/api/d94323bfaec344a59d3d/COOKRCP01/json/50/999/RCP_NM=${encodedSearchTerm}`
+        `https://openapi.foodsafetykorea.go.kr/api/d94323bfaec344a59d3d/COOKRCP01/json/1/999/RCP_NM=${encodedSearchTerm}`
     );
+
     return response.data.COOKRCP01?.row || [];
 };
